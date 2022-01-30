@@ -45,38 +45,26 @@ router.delete("/:id", verifyTokenAndAuthorization, async (req, res) => {
   }
 });
 
-// GET Cart
-router.get("/find/:id", async (req, res) => {
+// GET User Cart
+router.get("/find/:userId", verifyTokenAndAuthorization, async (req, res) => {
   try {
-    const Cart = await Cart.findById(req.params.id);
-    res.status(200).json({ Cart });
+    const cart = await Cart.findOne({
+      userId: req.params.userId,
+    });
+    res.status(200).json({ cart });
   } catch (error) {
     res.status(500).json(error);
   }
 });
 
-// // GET ALL CartS
-// router.get("/", async (req, res) => {
-//   const qNew = req.query.new;
-//   const qCategory = req.query.category;
-//   try {
-//     let Carts;
-//     if (qNew) {
-//       Carts = await Cart.find().sort({ createdAt: -1 }).limit(1);
-//     } else if (qCategory) {
-//       Carts = await Cart.find({
-//         categories: {
-//           $in: [qCategory],
-//         },
-//       });
-//     } else {
-//       Carts = await Cart.find();
-//     }
-
-//     res.status(200).json(Carts);
-//   } catch (error) {
-//     res.status(500).json(error);
-//   }
-// });
+// GET ALL
+router.get("/", verifyTokenAndAdmin, async (req, res) => {
+  try {
+    const carts = await Cart.find();
+    res.status(200).json(carts);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
 
 module.exports = router;
